@@ -3,6 +3,10 @@
 }
 
 <div class="container">
+    <div class="row-12 d-flex justify-content-center">
+        <input type="search" class="form-control" id="search-input" value=""/>
+        <button type="button" class="btn btn-dark" id="search-btn">Invia</button>
+    </div>
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
@@ -25,7 +29,7 @@
                         <th>Azioni</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody class="tbody"></tbody>
             </table>
         </div>
     </div>
@@ -35,14 +39,17 @@
 
 <script type="text/javascript">
 
+    const btnSearch = document.getElementById("search-btn");
+    btnSearch.addEventListener('click',loadList);
+
     loadList();
-
     function loadList() {
+    const inpSearch = document.getElementById("search-input").value;
 
-        axios.get('https://localhost:5000/api/posts').then((res) => {
+        axios.get('https://localhost:5000/api/posts/?inpSearch=' + inpSearch).then((res) => {
 
             console.log('risultato ok', res);
-
+             
             if (res.data.length == 0) {
 
                 document.querySelector('.js_no_post').classList.remove('d-none');
@@ -52,9 +59,9 @@
 
                 document.querySelector('.js_post_table').classList.remove('d-none');
                 document.querySelector('.js_no_post').classList.add('d-none');
+                document.querySelector('.tbody').innerHTML = '';
 
 
-                document.querySelector('.js_post_table tbody').innerHTML = '';
 
                 res.data.forEach(post => {
 
@@ -64,7 +71,8 @@
                         `
                         <tr>
 	                        <td>${post.id}</td>
-                            <td class="image"><img src="${post.image}"></td>
+                            <td class="image"><img class="img-fluid" src="${post.image}"></td>
+                            <td class="image"><img class="img-fluid" src="data:image/png;base64,${post.imageBytes}"></td>
 	                        <td class="title">${post.title}</td>
 	                        <td class="description">${post.description}</td>
 	                        <td class="items-buttons">
@@ -78,12 +86,13 @@
 		                            <a type="button" class="btn btn-danger btn-sm" onclick="deleteItem(${post.id})">
 			                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
 		                            </a>
+
                                 </div>
 	                        </td>
                         </tr>
                         `;
                 });
-            }
+            };
         });
 
     }
@@ -94,7 +103,7 @@
 
         if (isDelete) {
 
-            axios.delete(`http://localhost:5000/api/posts/${itemId}`).then((res) => {
+            axios.delete(`https://localhost:5000/api/posts/${itemId}`).then((res) => {
 
                 loadList();
 

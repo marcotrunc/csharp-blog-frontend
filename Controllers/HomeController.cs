@@ -26,7 +26,7 @@ namespace csharp_blog_frontend.Controllers
         [HttpGet]
         public IActionResult Update(int id)
         {
-            return View();
+            return View(id);
         }
     }
 }
